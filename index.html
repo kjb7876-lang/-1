@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>유통기한 + 한약재 품질관리</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --line: #dbe2ea;
+      --line-strong: #cdd6e1;
+      --text: #16202a;
+      --sub: #5b6673;
+      --primary: #2f6fed;
+      --primary-soft: #eef4ff;
+      --danger: #d64545;
+      --danger-soft: #ffe9e9;
+      --warn: #d68706;
+      --warn-soft: #fff3df;
+      --good: #1f8d47;
+      --good-soft: #e7f7eb;
+      --shadow: 0 10px 28px rgba(20, 29, 43, 0.08);
+      --radius: 18px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(47, 111, 237, 0.07), transparent 24%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+      padding-bottom: 36px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .title-area {
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.6rem, 2vw, 2.1rem);
+      line-height: 1.2;
+      word-break: keep-all;
+    }
+
+    .desc {
+      margin: 0;
+      color: var(--sub);
+      font-size: 0.95rem;
+      line-height: 1.65;
+      max-width: 780px;
+    }
+
+    .developer-badge {
+      flex-shrink: 0;
+      margin-top: 4px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--sub);
+      font-size: 0.73rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+    }
+
+    .dashboard-bar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .today-panel,
+    .storage-panel {
+      background: rgba(255,255,255,0.9);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+    }
+
+    .today-panel strong,
+    .storage-panel strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .today-meta,
+    .storage-meta {
+      color: var(--sub);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 1.08rem;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #2d3743;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea,
+    .toolbar input,
+    .toolbar select {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: var(--text);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus,
+    .toolbar input:focus,
+    .toolbar select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.12);
+    }
+
+    .form-group textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .btn-row,
+    .action-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 0.94rem;
+      font-weight: 800;
+      transition: transform 0.04s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(47, 111, 237, 0.22);
+    }
+
+    .btn-secondary {
+      background: var(--primary-soft);
+      color: #1f355f;
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .btn-ghost {
+      background: #f3f5f8;
+      color: #334155;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(210px, 1fr) repeat(2, minmax(130px, 180px)) auto auto auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      background: #fafcff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 13px;
+    }
+
+    .stat .label {
+      font-size: 0.78rem;
+      color: var(--sub);
+      margin-bottom: 7px;
+    }
+
+    .stat .value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .status-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-text {
+      color: var(--sub);
+      font-size: 0.88rem;
+    }
+
+    .notice {
+      display: none;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .notice.info {
+      background: #f8fbff;
+      border-color: #d8e5ff;
+      color: #234;
+    }
+
+    .notice.success {
+      background: #f2fbf4;
+      border-color: #d9f0df;
+      color: #185834;
+    }
+
+    .notice.error {
+      background: #fff4f4;
+      border-color: #ffd9d9;
+      color: #922f2f;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+      background: white;
+    }
+
+    thead th {
+      background: #f3f6fa;
+      padding: 12px 10px;
+      text-align: left;
+      font-size: 0.83rem;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #edf1f5;
+      font-size: 0.92rem;
+      vertical-align: top;
+    }
+
+    tbody tr:hover {
+      background: #fcfdff;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 29px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .expired {
+      background: #ffe5e5;
+      color: var(--danger);
+    }
+
+    .soon {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .good {
+      background: var(--good-soft);
+      color: var(--good);
+    }
+
+    .quality-good {
+      background: var(--good-soft);
+      color: var(--good);
+    }
+
+    .quality-check {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .quality-bad {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .small-btn {
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      border-radius: 10px;
+      box-shadow: none;
+    }
+
+    .muted {
+      color: var(--sub);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--sub);
+      padding: 34px 14px;
+      background: #fff;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: var(--sub);
+      line-height: 1.7;
+      background: #fafcff;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .mobile-list {
+      display: none;
+      gap: 12px;
+      flex-direction: column;
+    }
+
+    .mobile-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      padding: 14px;
+      box-shadow: 0 8px 22px rgba(20, 29, 43, 0.05);
+    }
+
+    .mobile-card h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      line-height: 1.35;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .mobile-meta {
+      display: grid;
+      grid-template-columns: 98px 1fr;
+      gap: 6px 10px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .mobile-meta .label {
+      color: var(--sub);
+      font-weight: 700;
+    }
+
+    .mobile-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-top: 10px;
+      border-top: 1px solid #eef1f4;
+    }
+
+    .hidden-file-input {
+      display: none;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1120px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 820px) {
+      .wrap {
+        padding: 16px;
+        padding-bottom: 28px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .developer-badge {
+        align-self: flex-end;
+      }
+
+      .dashboard-bar {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+
+      .toolbar,
+      .btn-row,
+      .action-group {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .table-wrap {
+        display: none;
+      }
+
+      .mobile-list {
+        display: flex;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .actions .small-btn,
+      .mobile-actions .small-btn {
+        width: calc(50% - 4px);
+      }
+
+      .status-strip {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title-area">
+        <h1>유통기한 + 한약재 품질관리</h1>
+        <p class="desc">
+          모바일과 PC에서 모두 사용할 수 있는 한약재 관리 웹앱입니다. 자동 저장, JSON 백업/복원,
+          전면 리셋, 오늘 날짜 연동 기능을 포함했습니다.
+        </p>
+      </div>
+      <div class="developer-badge">한약사김종범개발</div>
+    </div>
+
+    <div class="dashboard-bar">
+      <div class="today-panel">
+        <strong>현재 날짜</strong>
+        <div class="today-meta" id="todayInfo">-</div>
+      </div>
+      <div class="storage-panel">
+        <strong>저장 상태</strong>
+        <div class="storage-meta" id="storageInfo">브라우저 저장소와 동기화 준비 중...</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 id="formTitle">한약재 등록</h2>
+
+        <div id="noticeBox" class="notice info" aria-live="polite"></div>
+
+        <form id="itemForm">
+          <input type="hidden" id="editId" />
+
+          <div class="form-group">
+            <label for="name">한약재명</label>
+            <input type="text" id="name" placeholder="예: 감초, 황기, 당귀" required />
+          </div>
+
+          <div class="form-group">
+            <label for="receivedDate">입고일</label>
+            <input type="date" id="receivedDate" />
+          </div>
+
+          <div class="form-group">
+            <label for="expiryDate">유통기한</label>
+            <input type="date" id="expiryDate" required />
+          </div>
+
+          <div class="form-group">
+            <label for="storage">보관상태</label>
+            <select id="storage">
+              <option value="실온">실온</option>
+              <option value="냉장">냉장</option>
+              <option value="냉동">냉동</option>
+              <option value="건조보관">건조보관</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="quality">품질점검</label>
+            <select id="quality">
+              <option value="양호">양호</option>
+              <option value="확인필요">확인필요</option>
+              <option value="불량">불량</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="appearance">외관점검</label>
+            <input type="text" id="appearance" placeholder="예: 색상 정상, 이취 없음, 곰팡이 없음" />
+          </div>
+
+          <div class="form-group">
+            <label for="memo">메모</label>
+            <textarea id="memo" placeholder="추가 메모를 입력하세요."></textarea>
+          </div>
+
+          <div class="btn-row">
+            <button type="submit" class="btn-primary" id="saveBtn">저장</button>
+            <button type="button" id="resetBtn" class="btn-secondary">입력 초기화</button>
+          </div>
+
+          <div class="action-group">
+            <button type="button" id="downloadBtn" class="btn-secondary">JSON 백업</button>
+            <button type="button" id="uploadBtn" class="btn-secondary">JSON 불러오기</button>
+            <button type="button" id="fullResetBtn" class="btn-danger">전면 리셋</button>
+          </div>
+
+          <input type="file" id="uploadInput" class="hidden-file-input" accept=".json,application/json" />
+        </form>
+
+        <div class="footer-note">
+          편집 포인트<br />
+          - 임박 기준: JavaScript의 <b>EXPIRY_SOON_DAYS</b> 값 수정<br />
+          - 저장 키 이름: <b>LOCAL_KEY</b> 값 수정<br />
+          - 날짜는 로컬 기준(브라우저 현재 날짜)으로 계산되도록 보정했습니다.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>관리 목록</h2>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="label">전체</div>
+            <div class="value" id="statTotal">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">유통기한 만료</div>
+            <div class="value" id="statExpired">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">유통기한 임박</div>
+            <div class="value" id="statSoon">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">품질 확인필요/불량</div>
+            <div class="value" id="statQualityIssue">0</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input type="text" id="searchInput" placeholder="한약재명, 메모, 외관점검 검색" />
+          <select id="filterStatus">
+            <option value="all">전체 상태</option>
+            <option value="expired">만료</option>
+            <option value="soon">임박</option>
+            <option value="good">정상</option>
+          </select>
+          <select id="filterQuality">
+            <option value="all">전체 품질</option>
+            <option value="양호">양호</option>
+            <option value="확인필요">확인필요</option>
+            <option value="불량">불량</option>
+          </select>
+          <button type="button" id="sortBtn" class="btn-ghost">유통기한순</button>
+          <button type="button" id="todayFillBtn" class="btn-ghost">오늘 날짜 넣기</button>
+          <button type="button" id="refreshDateBtn" class="btn-ghost">오늘 기준 새로고침</button>
+        </div>
+
+        <div class="status-strip">
+          <div class="status-text" id="resultInfo">0건 표시 중</div>
+          <div class="status-text" id="lastBackupInfo">최근 백업 없음</div>
+        </div>
+
+        <div id="tableArea"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /************************************************************
+     * 설정값
+     ************************************************************/
+    const LOCAL_KEY = "herbal_quality_simple_app_v2";
+    const BACKUP_META_KEY = "herbal_quality_simple_app_v2_backup_meta";
+    const EXPIRY_SOON_DAYS = 30;
+
+    /************************************************************
+     * 상태
+     ************************************************************/
+    let items = loadItems();
+    let sortMode = "expiryAsc";
+
+    const itemForm = document.getElementById("itemForm");
+    const editId = document.getElementById("editId");
+    const formTitle = document.getElementById("formTitle");
+    const noticeBox = document.getElementById("noticeBox");
+
+    const nameInput = document.getElementById("name");
+    const receivedDateInput = document.getElementById("receivedDate");
+    const expiryDateInput = document.getElementById("expiryDate");
+    const storageInput = document.getElementById("storage");
+    const qualityInput = document.getElementById("quality");
+    const appearanceInput = document.getElementById("appearance");
+    const memoInput = document.getElementById("memo");
+
+    const searchInput = document.getElementById("searchInput");
+    const filterStatus = document.getElementById("filterStatus");
+    const filterQuality = document.getElementById("filterQuality");
+    const tableArea = document.getElementById("tableArea");
+    const resultInfo = document.getElementById("resultInfo");
+    const storageInfo = document.getElementById("storageInfo");
+    const todayInfo = document.getElementById("todayInfo");
+    const lastBackupInfo = document.getElementById("lastBackupInfo");
+    const uploadInput = document.getElementById("uploadInput");
+    const sortBtn = document.getElementById("sortBtn");
+
+    const statTotal = document.getElementById("statTotal");
+    const statExpired = document.getElementById("statExpired");
+    const statSoon = document.getElementById("statSoon");
+    const statQualityIssue = document.getElementById("statQualityIssue");
+
+    /************************************************************
+     * 유틸
+     ************************************************************/
+    function getTodayDate() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function toDateInputValue(date = new Date()) {
+      const local = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+      return local.toISOString().slice(0, 10);
+    }
+
+    function parseLocalDate(dateStr) {
+      if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return null;
+      const [y, m, d] = dateStr.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "-";
+      const date = parseLocalDate(dateStr);
+      if (!date) return dateStr;
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function formatDateTime(dateValue) {
+      const date = typeof dateValue === "string" ? new Date(dateValue) : dateValue;
+      if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "-";
+      return date.toLocaleString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function daysBetween(startDate, targetDate) {
+      const oneDay = 1000 * 60 * 60 * 24;
+      const t1 = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const t2 = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+      return Math.floor((t2 - t1) / oneDay);
+    }
+
+    function getExpiryStatus(expiryDateStr) {
+      if (!expiryDateStr) {
+        return { key: "good", text: "날짜없음", className: "good", daysLeft: null };
+      }
+
+      const today = getTodayDate();
+      const expiry = parseLocalDate(expiryDateStr);
+
+      if (!expiry) {
+        return { key: "good", text: "날짜오류", className: "soon", daysLeft: null };
+      }
+
+      const diff = daysBetween(today, expiry);
+
+      if (diff < 0) {
+        return { key: "expired", text: `만료 (${Math.abs(diff)}일 경과)`, className: "expired", daysLeft: diff };
+      }
+      if (diff <= EXPIRY_SOON_DAYS) {
+        return { key: "soon", text: `임박 (${diff}일 남음)`, className: "soon", daysLeft: diff };
+      }
+      return { key: "good", text: `정상 (${diff}일 남음)`, className: "good", daysLeft: diff };
+    }
+
+    function getQualityClass(quality) {
+      if (quality === "양호") return "quality-good";
+      if (quality === "확인필요") return "quality-check";
+      return "quality-bad";
+    }
+
+    function escapeHtml(text) {
+      return String(text || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showNotice(message, type = "info") {
+      noticeBox.textContent = message;
+      noticeBox.className = `notice show ${type}`;
+      clearTimeout(showNotice.timer);
+      showNotice.timer = setTimeout(() => {
+        noticeBox.className = "notice info";
+        noticeBox.textContent = "";
+      }, 2600);
+    }
+
+    function ensureDefaultsOnForm() {
+      if (!receivedDateInput.value) {
+        receivedDateInput.value = toDateInputValue();
+      }
+      if (!qualityInput.value) qualityInput.value = "양호";
+      if (!storageInput.value) storageInput.value = "실온";
+    }
+
+    function resetForm() {
+      editId.value = "";
+      formTitle.textContent = "한약재 등록";
+      itemForm.reset();
+      receivedDateInput.value = toDateInputValue();
+      qualityInput.value = "양호";
+      storageInput.value = "실온";
+      nameInput.focus();
+    }
+
+    function updateTodayInfo() {
+      const today = getTodayDate();
+      const todayStr = today.toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long"
+      });
+      todayInfo.textContent = `${todayStr} 기준으로 유통기한 상태를 계산합니다. 입고일 기본값도 오늘 날짜와 연동됩니다.`;
+    }
+
+    function updateStorageInfo() {
+      const savedAt = localStorage.getItem(`${LOCAL_KEY}_saved_at`);
+      if (!savedAt) {
+        storageInfo.textContent = "아직 저장 기록이 없습니다. 저장 시 브라우저에 자동 보관됩니다.";
+        return;
+      }
+      storageInfo.textContent = `자동 저장 사용 중 · 마지막 저장 ${formatDateTime(savedAt)}`;
+    }
+
+    function updateBackupInfo() {
+      try {
+        const meta = JSON.parse(localStorage.getItem(BACKUP_META_KEY) || "{}");
+        if (!meta.lastBackupAt) {
+          lastBackupInfo.textContent = "최근 백업 없음";
+          return;
+        }
+        lastBackupInfo.textContent = `최근 백업 ${formatDateTime(meta.lastBackupAt)}`;
+      } catch (error) {
+        lastBackupInfo.textContent = "최근 백업 정보 없음";
+      }
+    }
+
+    function normalizeItem(raw, index = 0) {
+      return {
+        id: raw.id || `imported-${Date.now()}-${index}-${Math.random().toString(36).slice(2, 9)}`,
+        name: String(raw.name || "").trim(),
+        receivedDate: raw.receivedDate ? formatDate(raw.receivedDate) : "",
+        expiryDate: raw.expiryDate ? formatDate(raw.expiryDate) : "",
+        storage: raw.storage || "실온",
+        quality: raw.quality || "양호",
+        appearance: String(raw.appearance || "").trim(),
+        memo: String(raw.memo || "").trim(),
+        createdAt: raw.createdAt || new Date().toISOString(),
+        updatedAt: raw.updatedAt || new Date().toISOString()
+      };
+    }
+
+    function validateItem(item) {
+      return Boolean(item.name && item.expiryDate);
+    }
+
+    function loadItems() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(LOCAL_KEY)) || [];
+        if (!Array.isArray(raw)) return [];
+        return raw.map((item, index) => normalizeItem(item, index)).filter(validateItem);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveItems() {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(items));
+      localStorage.setItem(`${LOCAL_KEY}_saved_at`, new Date().toISOString());
+      updateStorageInfo();
+    }
+
+    function getExportPayload() {
+      return {
+        app: "유통기한 + 한약재 품질관리",
+        version: 2,
+        exportedAt: new Date().toISOString(),
+        todayLocal: toDateInputValue(),
+        itemCount: items.length,
+        items
+      };
+    }
+
+    /************************************************************
+     * 등록 / 수정
+     ************************************************************/
+    itemForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      ensureDefaultsOnForm();
+
+      const data = {
+        id: editId.value || crypto.randomUUID(),
+        name: nameInput.value.trim(),
+        receivedDate: receivedDateInput.value || toDateInputValue(),
+        expiryDate: expiryDateInput.value,
+        storage: storageInput.value,
+        quality: qualityInput.value,
+        appearance: appearanceInput.value.trim(),
+        memo: memoInput.value.trim(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (!data.name || !data.expiryDate) {
+        showNotice("한약재명과 유통기한은 필수입니다.", "error");
+        return;
+      }
+
+      const existingIndex = items.findIndex(item => item.id === data.id);
+
+      if (existingIndex >= 0) {
+        items[existingIndex] = {
+          ...items[existingIndex],
+          ...data,
+          createdAt: items[existingIndex].createdAt || data.createdAt
+        };
+        showNotice("수정 내용이 저장되었습니다.", "success");
+      } else {
+        items.push(data);
+        showNotice("새 항목이 저장되었습니다.", "success");
+      }
+
+      saveItems();
+      render();
+      resetForm();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", function () {
+      resetForm();
+      showNotice("입력창을 초기화했습니다. 저장된 목록은 유지됩니다.", "info");
+    });
+
+    document.getElementById("todayFillBtn").addEventListener("click", function () {
+      receivedDateInput.value = toDateInputValue();
+      showNotice("입고일에 오늘 날짜를 넣었습니다.", "info");
+    });
+
+    document.getElementById("refreshDateBtn").addEventListener("click", function () {
+      updateTodayInfo();
+      render();
+      showNotice("현재 날짜 기준으로 상태를 다시 계산했습니다.", "info");
+    });
+
+    /************************************************************
+     * 렌더링
+     ************************************************************/
+    function getFilteredItems() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const statusFilter = filterStatus.value;
+      const qualityFilter = filterQuality.value;
+
+      const filtered = items.filter(item => {
+        const status = getExpiryStatus(item.expiryDate);
+        const text = [
+          item.name,
+          item.appearance,
+          item.memo,
+          item.storage,
+          item.quality
+        ].join(" ").toLowerCase();
+
+        const matchKeyword = !keyword || text.includes(keyword);
+        const matchStatus = statusFilter === "all" || status.key === statusFilter;
+        const matchQuality = qualityFilter === "all" || item.quality === qualityFilter;
+
+        return matchKeyword && matchStatus && matchQuality;
+      });
+
+      return filtered.sort((a, b) => {
+        if (sortMode === "nameAsc") {
+          return a.name.localeCompare(b.name, "ko");
+        }
+        const dateA = parseLocalDate(a.expiryDate);
+        const dateB = parseLocalDate(b.expiryDate);
+        return (dateA || new Date(2100, 0, 1)) - (dateB || new Date(2100, 0, 1));
+      });
+    }
+
+    function renderTable(itemsToRender) {
+      return `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>한약재명</th>
+                <th>유통기한 상태</th>
+                <th>입고일</th>
+                <th>유통기한</th>
+                <th>보관상태</th>
+                <th>품질점검</th>
+                <th>외관점검 / 메모</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsToRender.map(item => {
+                const status = getExpiryStatus(item.expiryDate);
+                return `
+                  <tr>
+                    <td><strong>${escapeHtml(item.name)}</strong></td>
+                    <td><span class="badge ${status.className}">${status.text}</span></td>
+                    <td>${formatDate(item.receivedDate)}</td>
+                    <td>${formatDate(item.expiryDate)}</td>
+                    <td>${escapeHtml(item.storage || "-")}</td>
+                    <td><span class="badge ${getQualityClass(item.quality)}">${escapeHtml(item.quality || "-")}</span></td>
+                    <td>
+                      <div>${escapeHtml(item.appearance || "-")}</div>
+                      <div class="muted" style="margin-top:6px;">${escapeHtml(item.memo || "")}</div>
+                    </td>
+                    <td>
+                      <div class="actions">
+                        <button class="small-btn btn-secondary" onclick="editItem('${item.id}')">수정</button>
+                        <button class="small-btn btn-danger" onclick="deleteItem('${item.id}')">삭제</button>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderMobileCards(itemsToRender) {
+      return `
+        <div class="mobile-list">
+          ${itemsToRender.map(item => {
+            const status = getExpiryStatus(item.expiryDate);
+            return `
+              <div class="mobile-card">
+                <h3>
+                  <span>${escapeHtml(item.name)}</span>
+                  <span class="badge ${status.className}">${status.text}</span>
+                </h3>
+                <div class="mobile-meta">
+                  <div class="label">입고일</div>
+                  <div>${formatDate(item.receivedDate)}</div>
+
+                  <div class="label">유통기한</div>
+                  <div>${formatDate(item.expiryDate)}</div>
+
+                  <div class="label">보관상태</div>
+                  <div>${escapeHtml(item.storage || "-")}</div>
+
+                  <div class="label">품질점검</div>
+                  <div><span class="badge ${getQualityClass(item.quality)}">${escapeHtml(item.quality || "-")}</span></div>
+
+                  <div class="label">외관점검</div>
+                  <div>${escapeHtml(item.appearance || "-")}</div>
+
+                  <div class="label">메모</div>
+                  <div>${escapeHtml(item.memo || "-")}</div>
+                </div>
+                <div class="mobile-actions">
+                  <button class="small-btn btn-secondary" onclick="editItem('${item.id}')">수정</button>
+                  <button class="small-btn btn-danger" onclick="deleteItem('${item.id}')">삭제</button>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function render() {
+      const filtered = getFilteredItems();
+      updateStats();
+      resultInfo.textContent = `${filtered.length}건 표시 중 · 전체 ${items.length}건`;
+
+      if (filtered.length === 0) {
+        tableArea.innerHTML = `
+          <div class="empty">
+            등록된 항목이 없거나 검색 결과가 없습니다.
+          </div>
+        `;
+        return;
+      }
+
+      tableArea.innerHTML = renderTable(filtered) + renderMobileCards(filtered);
+    }
+
+    function updateStats() {
+      const total = items.length;
+      let expired = 0;
+      let soon = 0;
+      let qualityIssue = 0;
+
+      items.forEach(item => {
+        const status = getExpiryStatus(item.expiryDate);
+        if (status.key === "expired") expired++;
+        if (status.key === "soon") soon++;
+        if (item.quality === "확인필요" || item.quality === "불량") qualityIssue++;
+      });
+
+      statTotal.textContent = total;
+      statExpired.textContent = expired;
+      statSoon.textContent = soon;
+      statQualityIssue.textContent = qualityIssue;
+    }
+
+    /************************************************************
+     * 수정 / 삭제
+     ************************************************************/
+    window.editItem = function (id) {
+      const item = items.find(x => x.id === id);
+      if (!item) return;
+
+      editId.value = item.id;
+      nameInput.value = item.name || "";
+      receivedDateInput.value = item.receivedDate || toDateInputValue();
+      expiryDateInput.value = item.expiryDate || "";
+      storageInput.value = item.storage || "실온";
+      qualityInput.value = item.quality || "양호";
+      appearanceInput.value = item.appearance || "";
+      memoInput.value = item.memo || "";
+
+      formTitle.textContent = "한약재 수정";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      showNotice("수정 모드로 불러왔습니다.", "info");
+    };
+
+    window.deleteItem = function (id) {
+      const ok = confirm("이 항목을 삭제할까요?");
+      if (!ok) return;
+
+      items = items.filter(item => item.id !== id);
+      saveItems();
+      render();
+      resetForm();
+      showNotice("항목을 삭제했습니다.", "success");
+    };
+
+    document.getElementById("fullResetBtn").addEventListener("click", function () {
+      const ok = confirm("저장된 모든 목록을 완전히 삭제할까요?\n이 작업은 되돌릴 수 없습니다.");
+      if (!ok) return;
+
+      items = [];
+      localStorage.removeItem(LOCAL_KEY);
+      localStorage.removeItem(`${LOCAL_KEY}_saved_at`);
+      localStorage.removeItem(BACKUP_META_KEY);
+      render();
+      resetForm();
+      updateStorageInfo();
+      updateBackupInfo();
+      showNotice("전면 리셋이 완료되었습니다. 저장 목록이 모두 삭제되었습니다.", "success");
+    });
+
+    /************************************************************
+     * 검색 / 필터 / 정렬
+     ************************************************************/
+    searchInput.addEventListener("input", render);
+    filterStatus.addEventListener("change", render);
+    filterQuality.addEventListener("change", render);
+
+    sortBtn.addEventListener("click", function () {
+      sortMode = sortMode === "expiryAsc" ? "nameAsc" : "expiryAsc";
+      sortBtn.textContent = sortMode === "expiryAsc" ? "유통기한순" : "이름순";
+      render();
+      showNotice(`정렬 기준을 ${sortMode === "expiryAsc" ? "유통기한순" : "이름순"}으로 바꿨습니다.`, "info");
+    });
+
+    /************************************************************
+     * JSON 백업 / 복원
+     ************************************************************/
+    document.getElementById("downloadBtn").addEventListener("click", function () {
+      const payload = getExportPayload();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json;charset=utf-8"
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const fileDate = toDateInputValue().replaceAll("-", "");
+      a.href = url;
+      a.download = `herbal_quality_backup_${fileDate}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      localStorage.setItem(BACKUP_META_KEY, JSON.stringify({ lastBackupAt: new Date().toISOString() }));
+      updateBackupInfo();
+      showNotice("JSON 백업 파일을 생성했습니다.", "success");
+    });
+
+    document.getElementById("uploadBtn").addEventListener("click", function () {
+      uploadInput.click();
+    });
+
+    uploadInput.addEventListener("change", async function (event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        const sourceItems = Array.isArray(parsed) ? parsed : parsed.items;
+
+        if (!Array.isArray(sourceItems)) {
+          throw new Error("복원 가능한 items 배열이 없습니다.");
+        }
+
+        const normalized = sourceItems.map((item, index) => normalizeItem(item, index)).filter(validateItem);
+
+        if (normalized.length === 0) {
+          throw new Error("유효한 항목이 없습니다.");
+        }
+
+        const ok = confirm(`${normalized.length}개의 항목으로 현재 목록을 덮어쓸까요?`);
+        if (!ok) {
+          uploadInput.value = "";
+          return;
+        }
+
+        items = normalized;
+        saveItems();
+        render();
+        resetForm();
+        showNotice(`${normalized.length}개 항목을 불러왔습니다.`, "success");
+      } catch (error) {
+        console.error(error);
+        showNotice("불러오기에 실패했습니다. JSON 파일 형식을 확인하세요.", "error");
+      } finally {
+        uploadInput.value = "";
+      }
+    });
+
+    /************************************************************
+     * 초기화
+     ************************************************************/
+    updateTodayInfo();
+    updateStorageInfo();
+    updateBackupInfo();
+    ensureDefaultsOnForm();
+    resetForm();
+    render();
+  </script>
+</body>
+</html>
